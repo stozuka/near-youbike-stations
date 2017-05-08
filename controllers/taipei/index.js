@@ -12,14 +12,16 @@ function processResults(stations, query) {
   stations.forEach(station => {
     const numUbike = parseInt(station.sbi);
 
-    // Continue if no bike is available
+    // Continue if no bike is available for this station
     if (numUbike === 0) { return; }
 
     const dist = geolib.getDistance(
       {latitude: lat, longitude: lng},
       {latitude: station.lat, longitude: station.lng}
     );
+
     const obj = {station: station.sna, num_ubike: numUbike, dist: dist};
+
     ret.push(obj);
   });
 
