@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  api: 'YOUR_KEY_HERE'
+  api: process.env.GOOGLE_API_KEY
 };
