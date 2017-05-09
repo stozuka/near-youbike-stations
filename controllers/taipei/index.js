@@ -30,8 +30,10 @@ function processResults(stations, query) {
     return {code: 1, result: []};
   }
 
+
   // If there are stations available
   ret.sort((a, b) => a.dist - b.dist);
+  debug(ret);
   ret.forEach(elem => delete elem.dist);
   return {code: 0, result: ret.slice(0, 2)};
 }
