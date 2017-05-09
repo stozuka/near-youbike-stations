@@ -30,7 +30,6 @@ function processResults(stations, query) {
     return {code: 1, result: []};
   }
 
-
   // If there are stations available
   ret.sort((a, b) => a.dist - b.dist);
   debug(ret);
