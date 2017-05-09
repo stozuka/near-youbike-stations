@@ -6,6 +6,8 @@ const geolib = require('geolib');
 const queryValidator = require('../../lib/query_validator');
 
 function processResults(stations, query) {
+  debug(stations);
+
   const {lat, lng} = query;
   let ret = [];
 
@@ -37,6 +39,8 @@ function processResults(stations, query) {
 }
 
 function getStations(req, res, next) {
+  debug(process.env.GOOGLE_API_KEY);
+
   const query = req.query;
 
   // Convert datatype of query from string to float
@@ -44,12 +48,9 @@ function getStations(req, res, next) {
     query[key] = parseFloat(query[key])
   }
 
-  // Validation of query values
+  // Check if lat and lng are valid values
   if (!queryValidator.isValidLatLong(query)) {
     return res.status(200).json({code: -1, result: []});
-  }
-  if (!queryValidator.isInTaipei(query)) {
-    return res.status(200).json({code: -2, result: []});
   }
 
   // Settings of GET request
@@ -59,13 +60,24 @@ function getStations(req, res, next) {
       scope: 'resourceAquire',
       rid: 'ddb80380-f1b3-4f8e-8016-7ed9cba571d5'
     },
-    json: true
+    json: true,
+    timeout: 1000 * 60 * 3 // 3 mins
   };
 
-  // Send GET request to YouBike API and process results
-  rp.get(options)
-    .then(response => processResults(response.result.results, query))
-    .then(resObj => res.status(200).json(resObj))
+  // Call Google API to check if it's in Taipei
+  queryValidator.isInTaipei(query)
+    .then(isValid => {
+      if (!isValid) {
+        return res.status(200).json({code: -2, result: []});
+      }
+
+      // return res.status(200).json({msg: 'Before YouBike API'});
+
+      // Send GET request to YouBike API and process results
+      return rp.get(options)
+        .then(response => processResults(response.result.results, query))
+        .then(resObj => res.status(200).json(resObj));
+    })
     .catch(_ => res.status(200).json({code: -3, result: []}));
 }
 
