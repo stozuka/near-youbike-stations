@@ -1,3 +1,9 @@
+# Heroku local env file
+.env
+
+# Dev file
+geoinfo.json
+
 # OS X
 .DS_Store*
 Icon?
