@@ -73,10 +73,7 @@ function getStations(req, res, next) {
         .then(response => processResults(response.result.results, query))
         .then(resObj => res.status(200).json(resObj));
     })
-    .catch(_ => {
-      console.log('*** err ***', err);
-      res.status(200).json({code: -3, result: []})
-    });
+    .catch(_ => res.status(200).json({code: -3, result: []}));
 }
 
 module.exports = {
